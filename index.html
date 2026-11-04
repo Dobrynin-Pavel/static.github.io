@@ -102,6 +102,9 @@ html.stepsout #pbar .mini{display:flex;animation:fadeIn .3s ease}
 .bigsteps.mini .st i{width:20px;height:20px;font-size:11px}
 .bigsteps.mini .steps li+li::before{margin:0 12px}
 .bigsteps.mini .lnk{font-size:13px}
+/* на шагах после расчёта — та же строка шагов, что на «Расчёте», в панели вместо состава заказа */
+#pbar .bsteps{flex:1;min-width:0;padding:0;box-shadow:none}
+@media (min-width:861px){#pbar .bclip.later{display:none}}
 /* шаги в узкой колонке: без линий, в две строки */
 @container (max-width:640px){.bigsteps{gap:12px}.bigsteps .steps{flex-wrap:wrap;gap:4px 16px}.bigsteps .steps li+li{flex:none}.bigsteps .steps li+li::before{display:none}}
 .stagehold{flex:1;min-height:0;border-radius:var(--rb);background:var(--card)}
@@ -257,6 +260,7 @@ h1[tabindex]:focus{outline:0}
   [data-g="prod"] .tls{grid-template-columns:repeat(3,minmax(0,1fr))!important}
   [data-g="prod"] .tl{padding:12px 10px}
   [data-g="prod"] .tlc>small:first-child{white-space:normal}
+  [data-g="prod"] .tlc>b{font-size:13px;white-space:nowrap}
   .layb,html.team .layb,.lyt{display:none}
 }
 /* телефон: сроки строками, дата и цена в одну линию */
@@ -354,6 +358,9 @@ html.dragon,html.dragon *{cursor:grabbing!important;-webkit-user-select:none;use
 .cmpq{font-size:14px;font-weight:400}
 .cmpa{justify-content:flex-start;gap:8px}
 .cmpa .in{min-height:40px;padding:0 12px}
+.cmpa label.err{color:var(--err)}
+/* на компьютере «без доставки» стоит у цены в панели, строка под переключателем — только на телефоне */
+@media (min-width:861px){#dlvnote{display:none}}
 .bdg{margin-left:6px;padding:1px 8px;border-radius:999px;background:var(--acc-bg);color:var(--acc-h);font-size:12px;font-weight:400}
 .cmps{padding:16px;border-radius:var(--rt);background:var(--card)}
 .cmps h3{margin:0 0 8px;font-size:14px}
@@ -673,7 +680,7 @@ label.f{display:flex;flex-direction:column;gap:6px;margin-top:12px;font-size:14p
   .fmgr{display:inline}
   .bigsteps .lnk{display:inline-flex;align-items:center;min-height:44px}
   .sprice{scroll-margin-top:calc(var(--bar) + 8px)}
-  .steps,.oc,.osep{display:none}
+  .steps,.oc,.osep,#pbar .bsteps{display:none}
   .ord{display:contents}
   .bigsteps{padding:0;box-shadow:none}
   .bigsteps .bt{font-size:24px}
@@ -924,7 +931,7 @@ function drawBack(w,h,grey){
   var k=texScale(),c=cvs(w*k,h*k),x=c.getContext('2d'),W=c.width,H=c.height,u=W/100;
   x.fillStyle=grey?'#2C2C2C':'#23201B';x.fillRect(0,0,W,H);
   x.fillStyle='#F6F1E7';x.font='600 '+(u*7)+'px Literata,Georgia,serif';x.fillText('Зерно',u*8,H-u*22);
-  x.font='400 '+(u*2.8)+'px Geologica,sans-serif';x.fillStyle='rgba(246,241,231,.75)';x.fillText('Большая Морская, 18 · zerno.example',u*8,H-u*15);x.fillText('Печать: цифровая, тираж '+(s.qty>=1?s.qty:0)+' экз.',u*8,H-u*10);
+  x.font='400 '+(u*2.8)+'px Geologica,sans-serif';x.fillStyle='rgba(246,241,231,.75)';x.fillText('Большая Морская, 18 · zerno.example',u*8,H-u*15);x.fillText('Тираж '+(s.qty>=1?s.qty:0)+' экз.',u*8,H-u*10);
   return c;
 }
 function drawPage(w,h,side,mat,col,blank){
@@ -1191,7 +1198,7 @@ var G={
     return a+'<div class="seg" id="orient" role="group" aria-label="Ориентация"><button data-orient="port" aria-pressed="'+(s.orient==='port')+'">Книжная</button><button data-orient="land" aria-pressed="'+(s.orient==='land')+'">Альбомная</button></div>'},
   pg:function(){
     return '<h4 class="sh" id="h-pg">Полосы <small>с обложкой, кратно 4</small></h4><div class="pg"><div class="stepper"><button id="pgminus" data-pg="-4" aria-label="Меньше полос"'+(s.pages<=8?' disabled':'')+'>−</button><output id="pgout" class="num">'+pagesTxt(s.pages)+'</output><button id="pgplus" data-pg="4" aria-label="Больше полос"'+(s.pages>=48?' disabled':'')+'>+</button></div><span class="fine" id="pgnote">'+pgNote(s.pages)+'</span></div>'
-     +'<p class="note warn" id="pgwarn"'+(s.pages>=48?'':' hidden')+'>48 полос — предел скрепки. Больше — на пружине.</p>'},
+     +'<p class="note warn" id="pgwarn"'+(s.pages>=48?'':' hidden')+'>48 полос — предел скрепки. Больше — на пружине.</p>'},
   cmat:function(){
     var sep=s.cover==='sep',cm=s.covmat||'cd250',o='<h4 class="sh" id="h-cmat">Бумага</h4><div class="seg" role="group" aria-label="Обложка">'
      +'<button data-covsel="same" aria-pressed="'+!sep+'">Как у блока'+(sep&&dlt({cover:'same'})!==null?chip(dlt({cover:'same'})):'')+'</button>'
@@ -1222,7 +1229,7 @@ var G={
     PRINT.forEach(function(p){b+=tl('print',p.v,s.print===p.v,p.v,s.print===p.v?'':dsh(dlt({print:p.v})))});
     return b+'</div>'},
   qin:function(){
-    return '<div class="qty"><div class="qbox"><button class="qb" data-q="-50" aria-label="Меньше на 50"'+(s.qty<=50?' disabled':'')+'>−</button><input id="qty" class="qin num" type="number" inputmode="numeric" min="1" max="2000" value="'+s.qty+'" aria-label="Тираж, экземпляров"><button class="qb" data-q="50" aria-label="Больше на 50"'+(s.qty>=500?' disabled':'')+'>+</button></div><span class="qu">экз.</span></div><p class="note" id="qnote"></p>'},
+    return '<div class="qty"><div class="qbox"><button class="qb" data-q="-50" aria-label="Меньше на 50"'+(s.qty<=50?' disabled':'')+'>−</button><input id="qty" class="qin num" type="number" inputmode="numeric" min="1" max="2000" value="'+s.qty+'" aria-label="Тираж, экземпляров" aria-describedby="qnote"><button class="qb" data-q="50" aria-label="Больше на 50"'+(s.qty>=500?' disabled':'')+'>+</button></div><span class="qu">экз.</span></div><p class="note" id="qnote"></p>'},
   qset:function(){
     var ok=!calcErr&&fmtOk(s);
     function tq(n){var p=ok?priceOf(Object.assign(clone(s),{qty:n})):null;return '<span class="tqn">'+n+' экз.</span><b class="num">'+(p?money(p.total):'—')+'</b><small class="num">'+(p?kop(p.unit)+'/экз.':'')+'</small>'}
@@ -1253,7 +1260,7 @@ function withS(t,fn){var k=s;s=t;try{return fn()}finally{s=k}}
 function cmpAdd(st,src){if(cmpV.length>=3)return false;if(cmpV.some(function(v){return sameSt(v.st,st)}))return true;cmpV.push({id:++cmpN,st:clone(st),src:src});return true}
 function cmpStart(){cmpV=[];if(s.qty>=1&&s.qty<=500)cmpAdd(s,'текущий');[100,200,300].forEach(function(n){if(cmpV.length<2)cmpAdd(Object.assign(clone(s),{qty:n}),'тираж')});cmpV.sort(function(x,y){return x.st.qty-y.st.qty})}
 function cmpRows(t){return withS(t,function(){var pd=PROD.find(function(p){return p.v===prodOf(s)});
-  return [['Тираж',s.qty+' экз.'],['Формат',fmtName(s)+(s.fmt==='cu'?'':', '+(s.orient==='land'?'альбомная':'книжная'))],['Полосы',pagesTxt(s.pages)],['Обложка',coverName(s)+(s.cover==='sep'?', печать '+s.cprint:'')],['Плёнка',lamName(s)],
+  return [['Тираж',s.qty+' экз.'],['Формат',fmtName(s)+(s.fmt==='cu'?'':', '+(s.orient==='land'?'альбомная':'книжная'))],['Полосы',pagesTxt(s.pages)],['Обложка',coverName(s)+(s.cover==='sep'?', печать '+s.cprint:'')],['Плёнка',lamOf(s)==='no'?'нет':LAM.find(function(x){return x.v===lamOf(s)}).t],
     ['Бумага блока',matOf(s).t.toLowerCase()+', '+s.dens+' г/⁠м²'],['Печать блока',s.print],['Срок',pd.t],['Счёт',vatTxt(s)],['Получение',dlvTxt(s)]]})}
 function cmpModalHTML(){
   var P=cmpV.map(function(v){return priceOf(v.st)}),R=cmpV.map(function(v){return cmpRows(v.st)}),h='';
@@ -1302,7 +1309,7 @@ document.addEventListener('click',function(e){
 });
 document.addEventListener('change',function(e){if(e.target.id==='cdiff'){cmpDiff=e.target.checked;renderLayer()}});
 document.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.id==='cadd'){e.preventDefault();var b=document.querySelector('[data-act=cadd]');if(b)b.click()}});
-document.addEventListener('input',function(e){if(e.target.id==='cadd'){e.target.removeAttribute('aria-invalid');var x=document.getElementById('cadderr');if(x)x.remove()}});
+document.addEventListener('input',function(e){if(e.target.id==='cadd'){e.target.removeAttribute('aria-invalid');var x=document.querySelector('label[for=cadd].err');if(x){x.textContent='Добавить тираж';x.classList.remove('err')}}});
 /* блок правой колонки: на телефоне он стоит в конце страницы, туда ведёт нажатие на цену */
 /* почему нет цены: одна формулировка для панели и правого блока */
 function whyTxt(){return calcErr?'Не удалось посчитать':s.qty>500?'Больше 500 экз. считает менеджер':(s.qty>=1?'Свой размер: от 70×70 до 297×420 мм':'Укажите тираж')}
@@ -1442,12 +1449,12 @@ function paintBar(){
     if(view==='check'){var cs2=checkState();a='<button class="cta two" data-go="pay"'+(cs2==='ok'||cs2==='accepted'?'':' disabled')+'><b>Следующий шаг</b><small>Оплата</small></button>'}
   }
   else{
-    p=ok?'<button class="bp" data-act="sostav" aria-haspopup="dialog" aria-live="polite"><b class="num">'+moneyBig(c.total)+'</b><small class="num"><span class="lg">готово '+dlabel(addBiz(pd.days))+' · <u>Подробности</u></span><span class="sh">'+dlabel(addBiz(pd.days))+'</span></small></button>'
+    p=ok?'<button class="bp" data-act="sostav" aria-haspopup="dialog" aria-live="polite"><b class="num">'+moneyBig(c.total)+'</b><small class="num"><span class="lg">готово '+dlabel(addBiz(pd.days))+(s.dlv==='dlv'?' · без доставки':'')+' · <u>Подробности</u></span><span class="sh">'+dlabel(addBiz(pd.days))+'</span></small></button>'
      :'<span class="bp off'+(calcErr?' bad':'')+'" aria-live="polite"><b>—</b><small>'+whyTxt()+'</small></span>';
     a=ok?'<button class="cta two" data-go="file" title="Ctrl+Enter"><b>Следующий шаг</b><small>'+nextTxt()+'</small></button>':calcErr?'<button class="cta" data-act="retry">Посчитать ещё раз</button>':s.qty>500?'<button class="cta" data-act="manager">Запросить расчёт</button>':'<button class="cta two" disabled><b>Следующий шаг</b><small>'+nextTxt()+'</small></button>';
   }
   /* на расчёте состав и цена — одна плашка: состав неотделим от цены */
-  var clip='<div class="bclip">'+p+'</div>',parts={sum:calc?'':stepsHTML(),price:calc?'<div class="ord">'+sumBar()+'<span class="osep"></span>'+clip+'</div>':clip,cta:a};
+  var clip='<div class="bclip'+(calc?'':' later')+'">'+p+'</div>',parts={sum:calc?'':'<div class="bigsteps bsteps"><span class="bt">Брошюра на скрепке</span>'+stepsHTML()+'</div>',price:calc?'<div class="ord">'+sumBar()+'<span class="osep"></span>'+clip+'</div>':clip,cta:a};
   /* уменьшенная строка заголовка и шагов: видна, когда большая ушла под панель */
   var mini=calc?'<div class="bigsteps mini"><span class="bt">Брошюра на скрепке</span>'+stepsHTML()+'<button class="lnk" data-act="reset">Сбросить</button></div>':'';
   morphInner(b,'<div class="bi">'+LAY.bar.map(function(k){return parts[k]}).join('')+'</div>'+mini);
@@ -1662,7 +1669,7 @@ function render(){
   rove();
   fitChips();
   fitCol();bigInert();
-  if(view==='calc')orderSave();
+  orderSave();
   savPaint();
   var lb=document.querySelector('.layb');if(lb){lb.setAttribute('aria-pressed',String(lay));lb.hidden=view!=='calc'}
   document.documentElement.classList.toggle('lay',lay&&view==='calc');
@@ -1748,8 +1755,8 @@ document.addEventListener('click',function(e){
     if(a==='sostav'){layer('sostav');return}
     if(a==='big'){setBig(!stageBig);return}
     if(a==='cmpopen'){cmpStart();layer('cmp');return}
-    if(a==='cadd'){var ci=document.getElementById('cadd'),cn=Math.floor(+(ci&&ci.value)||0);if(!(cn>=1&&cn<=500)){var ce2=document.getElementById('cadderr');if(!ce2&&ci){ce2=document.createElement('p');ce2.id='cadderr';ce2.className='ferr';ci.parentElement.appendChild(ce2)}if(ce2)ce2.textContent='Тираж от 1 до 500 экз.';if(ci){ci.setAttribute('aria-invalid','true');ci.focus()}return}
-      cmpAdd(Object.assign(clone(s),{qty:cn}),'тираж');cmpV.sort(function(x,y){return x.st.qty-y.st.qty});renderLayer();var ca=document.getElementById('cadd');if(ca)ca.focus();return}
+    if(a==='cadd'){var ci=document.getElementById('cadd'),cn=Math.floor(+(ci&&ci.value)||0);if(!(cn>=1&&cn<=500)){var cl=document.querySelector('label[for=cadd]');if(cl){cl.textContent='Тираж от 1 до 500 экз.';cl.classList.add('err')}if(ci){ci.setAttribute('aria-invalid','true');ci.focus()}return}
+      cmpAdd(Object.assign(clone(s),{qty:cn}),'тираж');cmpV.sort(function(x,y){return x.st.qty-y.st.qty});renderLayer();var ca=document.getElementById('cadd')||document.querySelector('[data-cpick="'+cmpN+'"]');if(ca)ca.focus();return}
     if(a==='save'){if(!valid()||calcErr){toast('Сохранить можно расчёт с ценой');return}if(SAV.some(function(x){return sameSt(Object.assign(clone(DEF),x.s),s)})){toast('Этот расчёт уже сохранён');return}SAV.unshift({id:Date.now(),at:Date.now(),s:clone(s),tot:priceOf(s).total});SAV=SAV.slice(0,12);if(!savStore()){SAV.shift();toast('Не удалось сохранить: память браузера недоступна или заполнена');return}savPaint();toast('Расчёт сохранён · всего '+SAV.length);return}
     if(a==='saved'){layer('saved');return}
     if(a==='cmpprint'){var de=document.documentElement;de.classList.add('pcmp');window.print();de.classList.remove('pcmp');return}
