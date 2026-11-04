@@ -24,7 +24,7 @@
   --line-btn:#E3E3E8;--fb:#8E8E93;--tb:#FFFFFF;--tbn:#D2D2D7;--tbw:1.5px;--ta:#0071E3;--taw:1.5px;--rt:12px;
   --ok:#157A4A;--ok-bg:#E8F6EE;--warn:#8A4B0A;--warn-bg:#FEF3E2;--warn-mark:#E3A13F;--err:#B42318;--err-bg:#FDECEA;
   --f:"Geologica","Onest","Segoe UI",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
-  --r:12px;--rb:20px;--rs:9px;--hd:48px;--bar:80px;
+  --r:12px;--rb:20px;--rs:9px;--hd:48px;--bar:88px;--mini:30px;
 }
 *{box-sizing:border-box}
 html{background:var(--paper)}
@@ -62,7 +62,8 @@ button.st:hover{background:var(--fill)}
 .lz{display:flex;flex-direction:column;gap:20px;min-width:0}
 .lzt{grid-column:1/-1}
 .lz:empty{display:none}
-.lzs{position:sticky;top:calc(var(--bar) + 16px);height:calc(100vh - var(--hd) - var(--bar) - 32px);margin:-4px;padding:4px;overflow-y:auto;border-radius:var(--rb);background:var(--sheet)}
+.lzs{position:sticky;top:calc(var(--bar) + 16px);height:calc(100vh - var(--hd) - var(--bar) - var(--mini) - 32px);margin:-4px;padding:4px;overflow-y:auto;border-radius:var(--rb);background:var(--sheet)}
+html.stepsout .lzs{top:calc(var(--bar) + var(--mini) + 16px)}
 .lzs.tall{height:auto;overflow:visible}
 .lzs.tall>.blk-stage{flex:none;height:var(--stgh,282px)}
 .blk{flex:none;min-width:0;container-type:inline-size}
@@ -78,18 +79,27 @@ button.st:hover{background:var(--fill)}
 .gi{container-type:inline-size}
 /* шаги заказа крупно на всю ширину над параметрами и сценой: под ними обе колонки начинаются вровень */
 .bigsteps{display:flex;align-items:center;gap:32px;padding-bottom:16px;box-shadow:0 1px 0 var(--rule)}
-.bigsteps .bt{flex:none;margin:0;font-size:20px;font-weight:600;letter-spacing:-.01em}
-.bigsteps .steps{flex:1;gap:0;margin:0;font-size:18px}
+.bigsteps .bt{flex:none;margin:0;font-size:30px;font-weight:600;letter-spacing:-.015em}
+.bigsteps .steps{flex:1;gap:0;margin:0;font-size:14px}
 .bigsteps .steps li{align-items:center}
 .bigsteps .steps li+li{flex:1}
 .bigsteps .steps li+li::before{content:"";flex:1;height:1px;min-width:24px;margin:0 16px;background:var(--rule-2)}
-.bigsteps .st{gap:10px;padding:6px 0}
-.bigsteps .st i{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--fill);font-family:inherit;font-size:14px;font-weight:600}
+.bigsteps .st{gap:8px;padding:6px 0}
+.bigsteps .st i{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--fill);font-family:inherit;font-size:12px;font-weight:600}
 .bigsteps li.now .st i{background:var(--acc);color:var(--on-acc)}
 .bigsteps li.done .st i{background:var(--ink);color:var(--on-acc)}
 .bigsteps .lnk{flex:none;font-size:14px}
+/* та же строка в панели после прокрутки: расположение прежнее, всё мельче, высота 30 px */
+#pbar .mini{display:none;max-width:1320px;height:var(--mini);margin:0 auto;padding:0;gap:16px;box-shadow:none;border-top:1px solid var(--rule)}
+html.stepsout #pbar .mini{display:flex;animation:fadeIn .3s ease}
+.bigsteps.mini .bt{font-size:15px}
+.bigsteps.mini .steps{font-size:12px}
+.bigsteps.mini .st{gap:6px;padding:0}
+.bigsteps.mini .st i{width:18px;height:18px;font-size:10px}
+.bigsteps.mini .steps li+li::before{margin:0 12px}
+.bigsteps.mini .lnk{font-size:12px}
 /* шаги в узкой колонке: без линий, в две строки */
-@container (max-width:640px){.bigsteps{gap:12px}.bigsteps .steps{flex-wrap:wrap;gap:4px 16px;font-size:14px}.bigsteps .steps li+li{flex:none}.bigsteps .steps li+li::before{display:none}}
+@container (max-width:640px){.bigsteps{gap:12px}.bigsteps .steps{flex-wrap:wrap;gap:4px 16px}.bigsteps .steps li+li{flex:none}.bigsteps .steps li+li::before{display:none}}
 .stagehold{flex:1;min-height:0;border-radius:var(--rb);background:var(--card)}
 .stagecol{height:100%;padding:12px 16px;display:flex;flex-direction:column}
 .sbx{display:flex;flex-direction:column;gap:12px}
@@ -214,11 +224,14 @@ h1[tabindex]:focus{outline:0}
 /* панель с шагами и ценой: закреплена сверху */
 #pbar{position:sticky;top:0;z-index:30;background:var(--sheet);color:var(--ink);box-shadow:0 1px 0 var(--rule);padding:0 max(24px,env(safe-area-inset-right,0px)) 0 max(24px,env(safe-area-inset-left,0px))}
 .bi{position:relative;height:var(--bar);display:flex;align-items:center;gap:24px;max-width:1320px;margin:0 auto}
-.bsum{flex:1;min-width:0;margin:0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:14px;line-height:1.45;color:var(--mute)}
-.sm{display:inline;border:0;background:none;padding:0;color:inherit;font:inherit;text-align:left}
-.sm span+span::before{content:"·";margin:0 6px}
-.sm:hover{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
-.lw h3,.lw h4{scroll-margin-top:calc(var(--bar) + 16px)}
+.ord{flex:1;min-width:0;align-self:stretch;margin:8px 0;display:flex;align-items:center;gap:16px;padding:6px 6px 6px 18px;border-radius:var(--r);background:var(--acc-bg)}
+.oc{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.oh{font-size:12px;line-height:16px;font-weight:600;color:var(--sel-dark)}
+.osep{width:1px;align-self:stretch;margin:6px 0;background:var(--tint-2)}
+@media (min-width:861px){.ord+.cta{align-self:stretch;margin:8px 0}}
+.bsum{min-width:0;margin:0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:13px;line-height:18px;color:var(--ink)}
+.bsum span+span::before{content:"·";margin:0 6px}
+.lw h3,.lw h4{scroll-margin-top:calc(var(--bar) + var(--mini) + 16px)}
 /* колонки групп в блоке и плашек в группе, заданные в раскладке. Уже 1100 px они не действуют */
 @media (min-width:1100px){
   .gz.gc1,.gz.gc2,.gz.gc3,.gz.gc4,.gz.gc5,.gz.gc6{display:grid;gap:20px;align-items:start}
@@ -371,8 +384,8 @@ html.dragon,html.dragon *{cursor:grabbing!important;-webkit-user-select:none;use
 /* цена въезжает сверху и проявляется за 0.5 с, рамка обрезает её по высоте панели */
 .bclip{align-self:stretch;display:flex;align-items:center;overflow:hidden;min-width:0}
 .bp{display:flex;flex-direction:column;align-items:flex-end;line-height:1.15;padding:6px 12px;border:0;border-radius:var(--r);background:none;color:inherit;text-align:right}
-button.bp:hover{background:var(--fill)}
-.bp b{font-size:26px;font-weight:700;letter-spacing:-.01em}
+button.bp:hover{background:var(--tint-2)}
+.bp b{font-size:22px;font-weight:700;letter-spacing:-.01em}
 .bp small{font-size:12px;color:var(--mute)}
 .bp.bad b,.bp.bad small{color:var(--err)}
 .toast .lnk{margin-left:8px;color:inherit}
@@ -551,9 +564,9 @@ label.f{display:flex;flex-direction:column;gap:6px;margin-top:12px;font-size:14p
 /* ширины: колонка параметров уже, потом всё в одну колонку, телефон */
 @media (max-width:1180px){
   .lw{padding:16px 24px;gap:24px}
-  .lzs{top:calc(var(--bar) + 12px);height:calc(100vh - var(--hd) - var(--bar) - 24px)}
+  .lzs{top:calc(var(--bar) + 12px);height:calc(100vh - var(--hd) - var(--bar) - var(--mini) - 24px)}
+  html.stepsout .lzs{top:calc(var(--bar) + var(--mini) + 12px)}
   .tab{padding:8px 5px;font-size:12px}
-  .bigsteps .steps{font-size:16px}
   .bigsteps .steps li+li::before{margin:0 10px}
 }
 @media (max-height:780px) and (min-width:861px){
@@ -621,6 +634,9 @@ label.f{display:flex;flex-direction:column;gap:6px;margin-top:12px;font-size:14p
   .bi{gap:12px}
   .bclip{flex:1}
   .bp{flex:1;align-items:flex-start;padding:4px 0;text-align:left}
+  button.bp:hover{background:none}
+  /* на телефоне подписи «Подробности» нет: стрелка у суммы показывает, что по цене открывается состав */
+  button.bp b::after{content:"";display:inline-block;width:16px;height:16px;margin-left:6px;vertical-align:1px;background:var(--acc);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center/contain no-repeat}
   .mstep{display:block;margin-left:auto;font-size:12px;color:var(--mute)}
   .mstep b{color:var(--ink)}
   .who{margin-left:16px}
@@ -632,8 +648,10 @@ label.f{display:flex;flex-direction:column;gap:6px;margin-top:12px;font-size:14p
   .fmgr{display:inline}
   .bigsteps .lnk{display:inline-flex;align-items:center;min-height:44px}
   .sprice{scroll-margin-top:calc(var(--bar) + 8px)}
-  .steps,.bsum{display:none}
+  .steps,.oc,.osep{display:none}
+  .ord{display:contents}
   .bigsteps{padding:0;box-shadow:none}
+  .bigsteps .bt{font-size:24px}
   .bigsteps .lnk{margin-left:auto}
   /* первая половина экрана: шапка, панель и сцена. Держатель хранит место, пока сцена встроена в экран при прокрутке */
   .stagehold{height:calc(50vh - var(--hd) - var(--bar));height:calc(50svh - var(--hd) - var(--bar))}
@@ -1079,7 +1097,11 @@ function fabCheck(){var r=document.documentElement,h=document.querySelector('.st
   if(view!=='calc'||!isPhone()||!h){r.classList.remove('fabon','barout');return}
   var spr=sp&&sp.offsetParent?sp.getBoundingClientRect():null;r.classList.toggle('barout',!!spr&&spr.top<innerHeight&&spr.bottom>0);
   var hr=h.getBoundingClientRect();r.classList.toggle('fabon',hr.bottom<h.offsetHeight*.15+80||hr.top>innerHeight)}
-var fabRaf=0;addEventListener('scroll',function(){if(fabRaf)return;fabRaf=requestAnimationFrame(function(){fabRaf=0;fabCheck()})},{passive:true});
+/* компьютер: большая строка шагов ушла под панель — в панели появляется уменьшенная */
+function stepsCheck(){var r=document.documentElement,bs=document.querySelector('.lw .bigsteps'),bi=document.querySelector('#pbar .bi');
+  var out=view==='calc'&&!isPhone()&&!!bs&&!!bi&&bs.getBoundingClientRect().bottom<bi.offsetHeight;
+  if(out!==r.classList.contains('stepsout')){r.classList.toggle('stepsout',out);fitCol()}}
+var fabRaf=0;addEventListener('scroll',function(){if(fabRaf)return;fabRaf=requestAnimationFrame(function(){fabRaf=0;fabCheck();stepsCheck()})},{passive:true});
 document.addEventListener('pointerdown',function(e){var sc=e.target.closest&&e.target.closest('#scene');if(!sc||e.button>0)return;dragS={x:e.clientX,y:e.clientY,rx:drx,ry:dry}});
 document.addEventListener('pointermove',function(e){if(!dragS)return;dry=Math.max(-100,Math.min(100,dragS.ry-(e.clientX-dragS.x)*.45));drx=Math.max(-50,Math.min(30,dragS.rx+(e.clientY-dragS.y)*.3));if(gl3){gl3.dirty=true;ask3D()}});
 function endDrag(){dragS=null}
@@ -1341,13 +1363,13 @@ function animPrice(b){var v=b.querySelector('.bp b'),t=v?v.textContent:null;
     if(priceAnim)priceAnim.cancel();
     priceAnim=b.querySelector('.bp').animate([{opacity:0,transform:'translateY(-'+b.querySelector('.bclip').offsetHeight+'px)'},{opacity:1,transform:'none'}],{duration:500,easing:'ease-out'})}
   if(t)lastPrice=t}
-/* сводка заказа в панели: одна строка-кнопка, клик возвращает к параметрам */
+/* сводка заказа в панели: заголовок и строка состава */
 function sumBar(){
   var f=FMT.find(function(x){return x.v===s.fmt}),d=dims(s),it=[
-    [s.fmt==='cu'?(d[0]||'—')+'×'+(d[1]||'—')+' мм':f.t+(s.orient==='land'?', альбомная':''),'h-fmt'],
-    [pagesTxt(s.pages),'h-pg'],['обложка '+coverName(s),'h-cmat'],[lamName(s),'h-lam'],
-    [matOf(s).t.toLowerCase()+' '+s.dens,'h-mat'],[s.print,'h-print'],[(s.qty>=1?s.qty:0)+' экз.','h-qty']];
-  return '<p class="bsum"><button class="sm" data-to="h-fmt" title="К параметрам" aria-label="К параметрам: '+esc(it.map(function(x){return x[0]}).join(', '))+'">'+it.map(function(x){return '<span>'+esc(x[0])+'</span>'}).join('')+'</button></p>'}
+    s.fmt==='cu'?(d[0]||'—')+'×'+(d[1]||'—')+' мм':f.t+(s.orient==='land'?', альбомная':''),
+    pagesTxt(s.pages),'обложка '+coverName(s),lamName(s),
+    matOf(s).t.toLowerCase()+' '+s.dens,s.print,(s.qty>=1?s.qty:0)+' экз.'];
+  return '<div class="oc"><b class="oh">Состав заказа</b><p class="bsum">'+it.map(function(x){return '<span>'+esc(x)+'</span>'}).join('')+'</p></div>'}
 function paintBar(){
   var b=document.getElementById('pbar'),calc=view==='calc';
   b.hidden=false;
@@ -1356,13 +1378,16 @@ function paintBar(){
     if(view==='check'){var cs2=checkState();a='<button class="cta two" data-go="pay"'+(cs2==='ok'||cs2==='accepted'?'':' disabled')+'><b>Следующий шаг</b><small>Оплата</small></button>'}
   }
   else{
-    p=ok?'<button class="bp" data-act="sostav" aria-haspopup="dialog" aria-live="polite"><b class="num">'+moneyBig(c.total)+'</b><small class="num"><span class="lg">готово '+dlabel(addBiz(pd.days))+' · <u>состав расчёта</u></span><span class="sh"><u>'+dlabel(addBiz(pd.days))+'</u></span></small></button>'
+    p=ok?'<button class="bp" data-act="sostav" aria-haspopup="dialog" aria-live="polite"><b class="num">'+moneyBig(c.total)+'</b><small class="num"><span class="lg">готово '+dlabel(addBiz(pd.days))+' · <u>Подробности</u></span><span class="sh">'+dlabel(addBiz(pd.days))+'</span></small></button>'
      :'<span class="bp off'+(calcErr?' bad':'')+'" aria-live="polite"><b>—</b><small>'+whyTxt()+'</small></span>';
     a=ok?'<button class="cta two" data-go="file" title="Ctrl+Enter"><b>Следующий шаг</b><small>'+nextTxt()+'</small></button>':calcErr?'<button class="cta" data-act="retry">Посчитать ещё раз</button>':s.qty>500?'<button class="cta" data-act="manager">Запросить расчёт</button>':'<button class="cta two" disabled><b>Следующий шаг</b><small>'+nextTxt()+'</small></button>';
   }
-  var parts={sum:calc?sumBar():stepsHTML(),price:'<div class="bclip">'+p+'</div>',cta:a};
-  morphInner(b,'<div class="bi">'+LAY.bar.map(function(k){return parts[k]}).join('')+'</div>');
-  animPrice(b);
+  /* на расчёте состав и цена — одна плашка: состав неотделим от цены */
+  var clip='<div class="bclip">'+p+'</div>',parts={sum:calc?'':stepsHTML(),price:calc?'<div class="ord">'+sumBar()+'<span class="osep"></span>'+clip+'</div>':clip,cta:a};
+  /* уменьшенная строка заголовка и шагов: видна, когда большая ушла под панель */
+  var mini=calc?'<div class="bigsteps mini"><span class="bt">Брошюра на скрепке</span>'+stepsHTML()+'<button class="lnk" data-act="reset">Сбросить</button></div>':'';
+  morphInner(b,'<div class="bi">'+LAY.bar.map(function(k){return parts[k]}).join('')+'</div>'+mini);
+  animPrice(b);stepsCheck();
 }
 
 /* ================= сводка заказа на следующих шагах ================= */
@@ -1627,10 +1652,9 @@ addEventListener('pointerup',dropEnd);addEventListener('pointercancel',dropEnd);
 
 /* ================= события ================= */
 document.addEventListener('click',function(e){
-  var t=e.target.closest('[data-to],[data-go],[data-act],[data-fmt],[data-orient],[data-pg],[data-mat],[data-dens],[data-print],[data-covsel],[data-ent],[data-dlv],[data-cprint],[data-lam],[data-prod],[data-sample],[data-accept],[data-undo],[data-pay],[data-wlm],[data-wlp],[data-stage],[data-q],[data-qset]');
+  var t=e.target.closest('[data-go],[data-act],[data-fmt],[data-orient],[data-pg],[data-mat],[data-dens],[data-print],[data-covsel],[data-ent],[data-dlv],[data-cprint],[data-lam],[data-prod],[data-sample],[data-accept],[data-undo],[data-pay],[data-wlm],[data-wlp],[data-stage],[data-q],[data-qset]');
   if(!t||t.disabled)return;
   var D=t.dataset;
-  if(D.to){var g=document.getElementById(D.to);if(g)g.scrollIntoView({behavior:ANIM?'smooth':'auto',block:'start'});return}
   if(D.stage){stage=D.stage;render();return}
   /* файл уже есть: после правки параметров ведём сразу на проверку */
   if(D.go){layerKind=null;renderLayer();go(D.go==='file'&&file&&view==='calc'?'check':D.go);return}
