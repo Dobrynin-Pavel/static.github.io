@@ -24,7 +24,7 @@
   --line-btn:#E3E3E8;--fb:#8E8E93;--tb:#FFFFFF;--tbn:#D2D2D7;--tbw:1.5px;--ta:#0071E3;--taw:1.5px;--rt:12px;
   --ok:#157A4A;--ok-bg:#E8F6EE;--warn:#8A4B0A;--warn-bg:#FEF3E2;--warn-mark:#E3A13F;--err:#B42318;--err-bg:#FDECEA;
   --f:"Geologica","Onest","Segoe UI",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
-  --r:12px;--rb:20px;--rs:9px;--hd:48px;--bar:88px;--mini:30px;
+  --r:12px;--rb:20px;--rs:9px;--hd:48px;--bar:88px;--mini:40px;
 }
 *{box-sizing:border-box}
 html{background:var(--paper)}
@@ -80,7 +80,7 @@ html.stepsout .lzs{top:calc(var(--bar) + var(--mini) + 16px)}
 /* шаги заказа крупно на всю ширину над параметрами и сценой: под ними обе колонки начинаются вровень */
 .bigsteps{display:flex;align-items:center;gap:32px;padding-bottom:16px;box-shadow:0 1px 0 var(--rule)}
 .bigsteps .bt{flex:none;margin:0;font-size:30px;font-weight:600;letter-spacing:-.015em}
-.bigsteps .steps{flex:1;gap:0;margin:0;font-size:14px}
+.bigsteps .steps{flex:1;gap:0;margin:0;font-size:16px}
 .bigsteps .steps li{align-items:center}
 .bigsteps .steps li+li{flex:1}
 .bigsteps .steps li+li::before{content:"";flex:1;height:1px;min-width:24px;margin:0 16px;background:var(--rule-2)}
@@ -88,16 +88,16 @@ html.stepsout .lzs{top:calc(var(--bar) + var(--mini) + 16px)}
 .bigsteps .st i{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--fill);font-family:inherit;font-size:12px;font-weight:600}
 .bigsteps li.now .st i{background:var(--acc);color:var(--on-acc)}
 .bigsteps li.done .st i{background:var(--ink);color:var(--on-acc)}
-.bigsteps .lnk{flex:none;font-size:14px}
-/* та же строка в панели после прокрутки: расположение прежнее, всё мельче, высота 30 px */
+.bigsteps .lnk{flex:none;font-size:16px}
+/* та же строка в панели после прокрутки: расположение прежнее, всё мельче, высота 40 px */
 #pbar .mini{display:none;max-width:1320px;height:var(--mini);margin:0 auto;padding:0;gap:16px;box-shadow:none;border-top:1px solid var(--rule)}
 html.stepsout #pbar .mini{display:flex;animation:fadeIn .3s ease}
-.bigsteps.mini .bt{font-size:15px}
-.bigsteps.mini .steps{font-size:12px}
+.bigsteps.mini .bt{font-size:16px}
+.bigsteps.mini .steps{font-size:13px}
 .bigsteps.mini .st{gap:6px;padding:0}
-.bigsteps.mini .st i{width:18px;height:18px;font-size:10px}
+.bigsteps.mini .st i{width:20px;height:20px;font-size:11px}
 .bigsteps.mini .steps li+li::before{margin:0 12px}
-.bigsteps.mini .lnk{font-size:12px}
+.bigsteps.mini .lnk{font-size:13px}
 /* шаги в узкой колонке: без линий, в две строки */
 @container (max-width:640px){.bigsteps{gap:12px}.bigsteps .steps{flex-wrap:wrap;gap:4px 16px}.bigsteps .steps li+li{flex:none}.bigsteps .steps li+li::before{display:none}}
 .stagehold{flex:1;min-height:0;border-radius:var(--rb);background:var(--card)}
