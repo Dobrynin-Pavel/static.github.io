@@ -124,7 +124,10 @@ html.stepsout #pbar .mini{display:flex;animation:fadeIn .3s ease}
 .flat svg{height:80%;width:auto;max-width:100%}
 .fab{display:none}
 .bigx{position:absolute;right:12px;top:12px;z-index:2;display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:10px;background:var(--sheet);color:var(--ink);box-shadow:0 1px 4px rgba(20,24,28,.10)}
-.bigx:hover{background:var(--fill)}
+.bigx:hover,.bigh:hover{background:var(--fill)}
+/* под ней — «выше»: только у закреплённой колонки на компьютере и не в попапе */
+.bigh{display:none;position:absolute;right:12px;top:56px;z-index:2;place-items:center;width:36px;height:36px;border:0;border-radius:10px;background:var(--sheet);color:var(--ink);box-shadow:0 1px 4px rgba(20,24,28,.10)}
+@media (min-width:1024px){.bigh{display:grid}}
 /* увеличенная сцена: окно почти на весь экран, по клику на затемнение или Esc закрывается */
 html.stagebig body::before{content:"";position:fixed;inset:0;z-index:44;background:rgba(20,24,28,.45)}
 html.stagebig .stagecol{position:fixed;inset:max(24px,4vh) max(24px,4vw);z-index:45;height:auto;padding:16px 20px 12px;border-radius:var(--rb);background:var(--card);box-shadow:0 24px 80px rgba(20,24,28,.35)}
@@ -186,6 +189,7 @@ h1[tabindex]:focus{outline:0}
    цена справа, а не помещается — под названием от левого края */
 .grp>.seg button{flex:1;display:flex;flex-wrap:wrap;align-items:center;align-content:flex-start;justify-content:flex-start;gap:2px 8px;padding:12px 16px;white-space:normal;line-height:1.2;text-align:left}
 .grp>.seg button:has(.sdl){justify-content:space-between}
+.grp>.seg.sgn button{padding-left:10px;padding-right:10px}
 .grp>.seg .sdl{margin-left:0}
 
 /* строка варианта: метка, название с пояснением, разница в цене */
@@ -749,8 +753,8 @@ label.f{display:flex;flex-direction:column;gap:6px;margin-top:12px;font-size:14p
   .chips .chip{flex:1;min-width:0}
 }
 /* плавность: состояния кнопок и плашек меняются за 0.18 с, новые элементы въезжают снизу на 16 px за 0.5 с, как цена в панели */
-.tl,.ro,.chip,.seg button,.qb,.stepper button,.tab,.lnk,.cta,.btn2,.agbtn,.layb,.savb,.bigx,.lyn button,.lyd,.lya,.lyo,.x,.bp,.st,.fab,.tl small{transition:background-color .3s ease,box-shadow .3s ease,color .3s ease,opacity .3s ease,transform .3s ease}
-.tl:active:not([disabled]),.seg button:active,.cta:active:not([disabled]),.btn2:active:not([disabled]),.agbtn:active:not([disabled]),.qb:active,.stepper button:active,.bigx:active,.savb:active,.layb:active{transform:scale(.98)}
+.tl,.ro,.chip,.seg button,.qb,.stepper button,.tab,.lnk,.cta,.btn2,.agbtn,.layb,.savb,.bigx,.bigh,.lyn button,.lyd,.lya,.lyo,.x,.bp,.st,.fab,.tl small{transition:background-color .3s ease,box-shadow .3s ease,color .3s ease,opacity .3s ease,transform .3s ease}
+.tl:active:not([disabled]),.seg button:active,.cta:active:not([disabled]),.btn2:active:not([disabled]),.agbtn:active:not([disabled]),.qb:active,.stepper button:active,.bigx:active,.bigh:active,.savb:active,.layb:active{transform:scale(.98)}
 .cmpk,.savi,.gi,.blk,.lz{transition:box-shadow .3s ease,outline-color .3s ease,opacity .3s ease}
 .dragging{transition:opacity .3s ease}
 .appear{animation:appearIn .3s ease-out}
@@ -915,7 +919,7 @@ function specLine(){return fmtName(s)+(s.orient==='land'?', альбомная':
 /* ширина сцены на десктопе: узкая для работы и половина блока. Выбор запоминаем */
 var TABS=[['cover','Обложка'],['spread','Разворот'],['paper','Бумага'],['lam','Плёнка'],['stack','Тираж']];
 function stageHTML(){
-  return '<div class="view" id="view"><div class="scene" id="scene" role="img" aria-label="'+esc(specLine())+'"></div>'+'<button class="bigx" data-act="big" aria-pressed="'+stageBig+'" aria-label="'+(stageBig?'Уменьшить 3D-модель':'Увеличить 3D-модель')+'">'+(stageBig?'<svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7 2.5V7H2.5M11 2.5V7h4.5M7 15.5V11H2.5M11 15.5V11h4.5"/></svg>':'<svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2.5 7V2.5H7M15.5 7V2.5H11M2.5 11v4.5H7M15.5 11v4.5H11"/></svg>')+'</button></div>'
+  return '<div class="view" id="view"><div class="scene" id="scene" role="img" aria-label="'+esc(specLine())+'"></div>'+'<button class="bigx" data-act="big" aria-pressed="'+stageBig+'" aria-label="'+(stageBig?'Уменьшить 3D-модель':'Увеличить 3D-модель')+'">'+(stageBig?'<svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7 2.5V7H2.5M11 2.5V7h4.5M7 15.5V11H2.5M11 15.5V11h4.5"/></svg>':'<svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2.5 7V2.5H7M15.5 7V2.5H11M2.5 11v4.5H7M15.5 11v4.5H11"/></svg>')+'</button>'+tallBtn()+'</div>'
    +'<div class="tabs" role="group" aria-label="Ракурс">'+TABS.map(function(t){return '<button class="tab" data-stage="'+t[0]+'" aria-pressed="'+(stage===t[0])+'">'+t[1]+'</button>'}).join('')+'</div>';
 }
 
@@ -1126,6 +1130,12 @@ function sync3D(instant){
 var vsz=null,drx=0,dry=0,lastStage=null,dragS=null;
 /* сцена на почти весь экран: тот же холст, колонка держит место, окно по центру поверх затемнения */
 var stageBig=false;
+/* компьютер: сцена выше на половину доступного экрана, без попапа; блоки под ней уходят вниз. Выбор не запоминается */
+var stageTall=false;
+function tallBtn(){if(stageBig)return '';return '<button class="bigh" data-act="tall" aria-pressed="'+stageTall+'" aria-label="'+(stageTall?'Уменьшить 3D-модель по высоте':'Увеличить 3D-модель по высоте')+'">'
+  +(stageTall?'<svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h12M9 1.5v5M6 4l3 2.5L12 4M9 16.5v-5M6 14l3-2.5 3 2.5"/></svg>'
+  :'<svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v14M5.5 5.5 9 2l3.5 3.5M5.5 12.5 9 16l3.5-3.5"/></svg>')+'</button>'}
+function setTall(v){stageTall=v;render();var f=document.querySelector('.bigh');if(f&&f.offsetParent)f.focus()}
 function setBig(v){
   var r=document.documentElement;
   if(!v&&stageBig&&!matchMedia('(prefers-reduced-motion: reduce)').matches){r.classList.add('bigout');setTimeout(function(){r.classList.remove('bigout');setBig0(false)},300);return}
@@ -1144,7 +1154,7 @@ var viewEl=null,viewRO=window.ResizeObserver?new ResizeObserver(function(){if(vi
    дата не влезает и так — месяц сокращается, и только потом перенос. Затем чип цены справа, пока в каждой плашке он помещается рядом с самым длинным словом; иначе у всей группы — под названием */
 function wordW(b){b.style.width='min-content';var w=b.offsetWidth;b.style.width='';return w}
 function tlIn(t){var cs=getComputedStyle(t);return t.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight)}
-function fitChips(){document.querySelectorAll('#app .tls').forEach(function(g){g.classList.remove('stk','tln','tlm','tlw','tlcw');
+function fitChips(){fitSegs();document.querySelectorAll('#app .tls').forEach(function(g){g.classList.remove('stk','tln','tlm','tlw','tlcw');
   var all=[].filter.call(g.querySelectorAll('.tl'),function(t){return t.offsetWidth>0}),over=function(q){return all.some(function(t){var w=tlIn(t);return [].some.call(t.querySelectorAll(q),function(e){return wordW(e)>w})})},
       D=':scope>b',C='.tlc>small:first-child';
   /* дата и подпись срока подгоняются каждая сама по себе: длинная подпись не сокращает дату */
@@ -1155,7 +1165,14 @@ function fitChips(){document.querySelectorAll('#app .tls').forEach(function(g){g
   /* решение не зависит от того, какая плашка выбрана: самое длинное слово каждой плашки + самый широкий чип группы */
   var tight=ts.some(function(t){var b=t.querySelector('b'),cs=getComputedStyle(t);if(!b)return false;b.style.width='min-content';var w=b.offsetWidth;b.style.width='';return w+8+chip>t.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight)});
   if(tight)g.classList.add('stk')})}
-var fitRaf=0;if(document.fonts)document.fonts.ready.then(function(){fitChips();fitCol()});
+/* переключатель параметра: название не помещается в строку — у группы поля уже, как у плашек */
+function fitSegs(){document.querySelectorAll('#app .grp>.seg').forEach(function(g){g.classList.remove('sgn');
+  var over=function(){return [].some.call(g.children,function(b){var t=b.firstChild;if(!b.offsetWidth||!t||t.nodeType!==3)return false;var r=document.createRange();r.selectNodeContents(t);b.style.whiteSpace='nowrap';var w=r.getBoundingClientRect().width;b.style.whiteSpace='';return w>tlIn(b)+.5})};
+  if(over())g.classList.add('sgn')})}
+/* плашки зависят от ширины колонки, а колонка — от высоты плашек: у незакреплённой колонки своя прокрутка сужает её на 15 px.
+   Поэтому второй проход — уже в итоговом состоянии колонки */
+function fitAll(){fitChips();fitCol();fitChips();fitCol()}
+var fitRaf=0;if(document.fonts)document.fonts.ready.then(fitAll);
 /* закреплённая колонка: если всё помещается — держится сверху и сцена занимает свободное место;
    если нет — своей прокрутки нет, колонка едет со страницей и закрепляется по нижнему краю */
 function fitCol(){var z=document.querySelector('.lzs');if(!z)return;
@@ -1171,12 +1188,17 @@ function fitCol(){var z=document.querySelector('.lzs');if(!z)return;
     /* и ужатая сцена не влезает: вместо неё кнопка, 3D открывается крупно поверх страницы */
     if(z.offsetHeight>room+1)z.classList.add('no3d');
     z.style.top=Math.min(document.getElementById('pbar').offsetHeight+16,innerHeight-z.offsetHeight-16)+'px'}
+  /* сцена развёрнута: к её высоте прибавляется половина доступного экрана, но не больше экрана; сцена не прячется за кнопку.
+     Колонка держится верхним краем под панелью, чтобы сцена была видна, пока листаешь параметры; срок и оформление — внизу страницы */
+  if(stageTall){var sg=z.querySelector('.blk-stage'),base=z.classList.contains('no3d')?0:sg.offsetHeight,room2=innerHeight-bar0-32;
+    z.classList.remove('no3d');z.classList.add('tall');z.style.setProperty('--stgh',Math.min(room2,base+Math.floor(room2/2))+'px');
+    z.style.top=(document.getElementById('pbar').offsetHeight+16)+'px'}
   /* в конце страницы колонка упирается в низ сетки над подвалом и уходила бы под панель:
      даём ей опуститься в зону подвала — справа там пусто */
   var lw=z.parentElement,tail=document.documentElement.scrollHeight-(lw.getBoundingClientRect().bottom+scrollY)+(parseFloat(getComputedStyle(lw).paddingBottom)||0),
       dip=Math.ceil(bar0+16+z.offsetHeight-(innerHeight-tail));
   if(dip>0)z.style.marginBottom=-Math.min(dip,Math.floor(tail))+'px'}
-addEventListener('resize',function(){cancelAnimationFrame(fitRaf);fitRaf=requestAnimationFrame(function(){fitChips();fitCol()})});
+addEventListener('resize',function(){cancelAnimationFrame(fitRaf);fitRaf=requestAnimationFrame(fitAll)});
 addEventListener('resize',function(){vsz=null;sync3D(true);fabCheck();if(lay&&innerWidth<1100){lay=false;render()}});
 /* телефон: после первой половины экрана появляется кнопка, сцена встаёт в верхнюю половину текущего экрана */
 function isPhone(){return innerWidth<=860}
@@ -1188,7 +1210,7 @@ function fabCheck(){var r=document.documentElement,h=document.querySelector('.st
 /* компьютер: большая строка шагов ушла под панель — в панели появляется уменьшенная */
 function stepsCheck(){var r=document.documentElement,bs=document.querySelector('.lw .bigsteps'),bi=document.querySelector('#pbar .bi');
   var out=view==='calc'&&!isPhone()&&!!bs&&!!bi&&bs.getBoundingClientRect().bottom<bi.offsetHeight;
-  if(out!==r.classList.contains('stepsout')){r.classList.toggle('stepsout',out);fitCol()}}
+  if(out!==r.classList.contains('stepsout')){r.classList.toggle('stepsout',out);fitAll()}}
 var fabRaf=0;addEventListener('scroll',function(){if(fabRaf)return;fabRaf=requestAnimationFrame(function(){fabRaf=0;fabCheck();stepsCheck()})},{passive:true});
 document.addEventListener('pointerdown',function(e){var sc=e.target.closest&&e.target.closest('#scene');if(!sc||e.button>0)return;dragS={x:e.clientX,y:e.clientY,rx:drx,ry:dry}});
 document.addEventListener('pointermove',function(e){if(!dragS)return;dry=Math.max(-100,Math.min(100,dragS.ry-(e.clientX-dragS.x)*.45));drx=Math.max(-50,Math.min(30,dragS.rx+(e.clientY-dragS.y)*.3));if(gl3){gl3.dirty=true;ask3D()}});
@@ -1210,7 +1232,8 @@ function miniCover(){
 function ro(attr,val,sel,t,sub,d,o){o=o||{};var rd=o.rd!==undefined?o.rd:(sel||o.dis?'':dtxt(d));
   return '<button class="ro" data-'+attr+'="'+val+'" aria-pressed="'+sel+'"'+(o.dis?' disabled':'')+'>'+(o.pre||'')+'<span class="rt"><b>'+t+'</b>'+(sub?'<small>'+sub+'</small>':'')+'</span><span class="rd num">'+rd+'</span></button>'}
 /* плитка варианта: название и разница в цене, плитки компактнее строк и убирают лишний скролл */
-function chip(d){return d===null?'':' <small class="num sdl'+(d<-.5?' dn':'')+'">'+dsh(d)+'</small>'}
+/* чип цены в переключателе: отступ от названия задаёт промежуток раскладки, пробела перед чипом нет — он переносил название */
+function chip(d){return d===null?'':'<small class="num sdl'+(d<-.5?' dn':'')+'">'+dsh(d)+'</small>'}
 function dsh(d){return d===null?'':Math.abs(d)<.5?'±0 ₽':dtxt(d)}
 function tl(attr,val,sel,t,sm,o){o=o||{};var dc=/^[+−±]/.test(sm||'')?' dl'+(sm.charAt(0)==='−'?' dn':''):'';return '<button class="tl'+(o.pre?' tlc':'')+'" data-'+attr+'="'+val+'" aria-pressed="'+sel+'"'+(o.dis?' disabled':'')+'>'+(o.pre||'')+'<b>'+t+'</b><small class="num'+dc+'">'+(sm||'')+'</small></button>'}
 /* группы внутри блоков. Каждая рисуется сама, порядок и колонки задаёт раскладка */
@@ -1408,7 +1431,7 @@ function blkHTML(id){
   var B=BLK[id],gz=B.g?'<div class="gz'+(LAY.gc[id]?' gc'+LAY.gc[id]:'')+'">'+grpOrder(id).map(grpWrap).join('')+'</div>':'',body;
   if(id==='steps')body='<div class="bigsteps"><h2 class="bt">Брошюра на скрепке</h2>'+stepsHTML()+'<button class="lnk" data-act="reset">Сбросить</button></div><p class="dnote">Разница на плашках — за весь тираж, относительно выбранного варианта</p>';
   else if(id==='stage')body='<div class="stagehold"><div class="stagecol"><div class="stage" id="stage">'+stageHTML()+'</div></div></div>'
-   +'<button class="btn2 s3d" data-act="big"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M9 1.8 15.5 5.4v7.2L9 16.2 2.5 12.6V5.4zM2.5 5.4 9 9l6.5-3.6M9 9v7.2"/></svg>Показать 3D-модель</button>';
+   +'<button class="btn2 s3d" data-act="tall"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M9 1.8 15.5 5.4v7.2L9 16.2 2.5 12.6V5.4zM2.5 5.4 9 9l6.5-3.6M9 9v7.2"/></svg>Показать 3D-модель</button>';
   else if(id==='terms')body=(calcErr?'<div class="note err"><b>Не удалось посчитать цену.</b> Параметры сохранены, цены вернутся после нового расчёта. <button class="lnk" data-act="retry">Посчитать ещё раз</button></div>':'')+'<div class="sidegrp">'+gz+'</div>';
   else if(id==='act')body=spriceHTML()+gz;
   else body='<section class="card"><h3'+(id==='qty'?' id="h-qty"':'')+'><span class="bn" aria-hidden="true">'+blkNo(id)+'</span><span>'+B.h+'</span></h3>'+gz+'</section>';
@@ -1694,8 +1717,7 @@ function render(){
   if(view==='calc'){renderQty();sync3D(fresh)}
   paintBar();
   rove();
-  fitChips();
-  fitCol();bigInert();
+  fitAll();bigInert();
   orderSave();
   savPaint();
   var lb=document.querySelector('.layb');if(lb){lb.setAttribute('aria-pressed',String(lay));lb.hidden=view!=='calc'}
@@ -1780,7 +1802,7 @@ document.addEventListener('click',function(e){
   if(D.act){
     var a=D.act;
     if(a==='sostav'){layer('sostav');return}
-    if(a==='big'){setBig(!stageBig);return}
+    if(a==='big'){setBig(!stageBig);return}if(a==='tall'){setTall(!stageTall);return}
     if(a==='cmpopen'){cmpStart();layer('cmp');return}
     if(a==='cadd'){var ci=document.getElementById('cadd'),cn=Math.floor(+(ci&&ci.value)||0);if(!(cn>=1&&cn<=500)){var cl=document.querySelector('label[for=cadd]');if(cl){cl.textContent='Тираж от 1 до 500 экз.';cl.classList.add('err')}if(ci){ci.setAttribute('aria-invalid','true');ci.focus()}return}
       cmpAdd(Object.assign(clone(s),{qty:cn}),'тираж');cmpV.sort(function(x,y){return x.st.qty-y.st.qty});renderLayer();var ca=document.getElementById('cadd')||document.querySelector('[data-cpick="'+cmpN+'"]');if(ca)ca.focus();return}
