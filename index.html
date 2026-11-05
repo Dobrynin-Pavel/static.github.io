@@ -1145,8 +1145,9 @@ function setTall(v){var sg=document.querySelector('.lzs .blk-stage'),h0=sg?sg.of
   var zc=sg.closest('.lzs');tallAnim=true;zc.style.overflow='hidden';sg.style.flex='none';sg.style.overflow='hidden';sg.style.height=h0+'px';sg.offsetHeight;
   sg.style.transition='height .3s cubic-bezier(.2,.8,.2,1)';sg.style.height=h1+'px';
   var t,done=function(e){if(e&&e.target!==sg)return;sg.removeEventListener('transitionend',done);clearTimeout(t);
-    sg.style.flex=sg.style.overflow=sg.style.height=sg.style.transition='';zc.style.overflow='';tallAnim=false;fitAll()};
-  t=setTimeout(done,450);sg.addEventListener('transitionend',done)}
+    sg.style.flex=sg.style.overflow=sg.style.height=sg.style.transition='';zc.style.overflow='';tallAnim=false;fitAll();fit3D()};
+  t=setTimeout(done,450);sg.addEventListener('transitionend',done);
+  (function follow(){if(!tallAnim)return;fit3D();requestAnimationFrame(follow)})()}
 function setBig(v){
   var r=document.documentElement;
   if(!v&&stageBig&&!matchMedia('(prefers-reduced-motion: reduce)').matches){r.classList.add('bigout');setTimeout(function(){r.classList.remove('bigout');setBig0(false)},300);return}
@@ -1160,7 +1161,10 @@ function bigInert(){var on=stageBig&&view==='calc',sc=document.querySelector('.s
   if(sc){if(on){sc.setAttribute('role','dialog');sc.setAttribute('aria-modal','true');sc.setAttribute('aria-label','3D-модель брошюры')}else{sc.removeAttribute('role');sc.removeAttribute('aria-modal');sc.removeAttribute('aria-label')}}}
 function viewSize(){var v=document.getElementById('view');if(v){var r=v.getBoundingClientRect();if(r.width>50&&r.height>50)vsz=[r.width,r.height]}if(!vsz)vsz=innerWidth>860?[Math.max(400,innerWidth-544),Math.max(360,innerHeight-250)]:[innerWidth-32,300];return vsz}
 /* сцена следит за своим блоком: панель раздвигается, а камера и холст перестраиваются в том же кадре, без мигания */
-var viewEl=null,viewRO=window.ResizeObserver?new ResizeObserver(function(){if(view!=='calc'||!gl3)return;vsz=null;sync3D(true);if(gl3.cur&&gl3.sz){draw3D();gl3.dirty=false}}):null;
+/* после подгонок окно сцены могло измениться: холст подстраиваем сразу, не дожидаясь сигнала о размере */
+function size3D(){if(view!=='calc'||!gl3||!gl3.sz)return;var o=gl3.sz;vsz=null;viewSize();if(o!==vsz[0]+'x'+vsz[1])fit3D()}
+function fit3D(){if(view!=='calc'||!gl3)return;vsz=null;sync3D(true);if(gl3.cur&&gl3.sz){draw3D();gl3.dirty=false}}
+var viewEl=null,viewRO=window.ResizeObserver?new ResizeObserver(fit3D):null;
 /* плашки группы подгоняются под свои слова, а не под ширину окна: самое длинное слово, дата или подпись срока не помещается — у группы поля уже и дата мельче,
    дата не влезает и так — месяц сокращается, и только потом перенос. Затем чип цены справа, пока в каждой плашке он помещается рядом с самым длинным словом; иначе у всей группы — под названием */
 function wordW(b){b.style.width='min-content';var w=b.offsetWidth;b.style.width='';return w}
@@ -1703,11 +1707,15 @@ function copy(text,msg){try{navigator.clipboard.writeText(text).then(function(){
 /* morphdom обновляет только изменившиеся узлы: переходы CSS успевают сыграть, фокус и ввод не теряются */
 var ANIM=false,lastView=null;
 function appear(n){n.classList.add('appear');n.addEventListener('animationend',function h(){n.classList.remove('appear');n.removeEventListener('animationend',h)})}
+/* классы и размеры от fitChips, fitSegs, fitCol и анимации сцены переносим в новую разметку — их пересчитают после отрисовки */
+var FITC=['tall','no3d','stk','tln','tlm','tlw','tlcw','sgn'];
+function keepFit(a,b){if(!a.classList||!b.classList)return;FITC.forEach(function(c){if(a.classList.contains(c))b.classList.add(c)});
+  if((a.classList.contains('lzs')||a.classList.contains('blk-stage'))&&a.getAttribute('style'))b.setAttribute('style',a.getAttribute('style'))}
 function morphInner(el,html){
   if(!window.morphdom||!ANIM){el.innerHTML=html;return}
   var w=el.cloneNode(false);w.removeAttribute('id');w.innerHTML=html;
   morphdom(el,w,{childrenOnly:true,
-    onBeforeElUpdated:function(a,b){if(a.id==='scene'){a.setAttribute('aria-label',b.getAttribute('aria-label'));return false}if(a.isEqualNode(b))return false;if(a.tagName==='INPUT'&&a===document.activeElement)b.value=a.value;return true},
+    onBeforeElUpdated:function(a,b){keepFit(a,b);if(a.id==='scene'){a.setAttribute('aria-label',b.getAttribute('aria-label'));return false}if(a.isEqualNode(b))return false;if(a.tagName==='INPUT'&&a===document.activeElement)b.value=a.value;return true},
     onNodeAdded:function(n){if(n.nodeType===1&&!(n.closest&&n.closest('svg'))&&!(n.parentElement&&n.parentElement.closest('.appear')))appear(n);return n}
   });
 }
@@ -1728,7 +1736,7 @@ function render(){
   if(view==='calc'){renderQty();sync3D(fresh)}
   paintBar();
   rove();
-  fitAll();bigInert();
+  fitAll();size3D();bigInert();
   orderSave();
   savPaint();
   var lb=document.querySelector('.layb');if(lb){lb.setAttribute('aria-pressed',String(lay));lb.hidden=view!=='calc'}
