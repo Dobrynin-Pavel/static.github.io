@@ -981,7 +981,10 @@ function drawPage(w,h,side,mat,col,blank){
 function drawBump(w,h,key){var k=Math.min(texScale(),8),c=cvs(w*k,h*k),x=c.getContext('2d');tile(x,imgs[key],c.width,c.height,c.width*.34,1);return c}
 
 /* ---------- сцена ---------- */
-function canGL(){try{var c=document.createElement('canvas');return !!(window.THREE&&(c.getContext('webgl2')||c.getContext('webgl')))}catch(e){return false}}
+/* поддержку WebGL проверяем один раз и пробный контекст сразу отпускаем: браузер держит не больше 16 контекстов
+   и при переполнении отбирает самый старый — контекст сцены, модель пропадает */
+var glOK=null;
+function canGL(){if(!window.THREE)return false;if(glOK===null){try{var c=document.createElement('canvas'),x=c.getContext('webgl2')||c.getContext('webgl');glOK=!!x;var l=x&&x.getExtension('WEBGL_lose_context');if(l)l.loseContext()}catch(e){glOK=false}}return glOK}
 function sn(a){return Math.sin(a)}function cs(a){return Math.cos(a)}
 function ease(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2}
 var SEG=48;
@@ -990,6 +993,7 @@ function strip(mat,n){var g=new THREE.BufferGeometry(),nn=n||SEG+1;g.setAttribut
 function setStrip(m,fn,flipU){var p=m.geometry.attributes.position,uv=m.geometry.attributes.uv,nn=p.count/2;for(var i=0;i<nn;i++){var q=fn(i/(nn-1));p.setXYZ(i*2,q[0],q[1],q[2]);p.setXYZ(i*2+1,q[3],q[4],q[5]);var u=flipU?1-i/(nn-1):i/(nn-1);uv.setXY(i*2,u,1);uv.setXY(i*2+1,u,0)}p.needsUpdate=true;m.geometry.computeVertexNormals();m.geometry.attributes.normal.needsUpdate=true}
 function init3D(){
   var r=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
+  r.domElement.addEventListener('webglcontextlost',function(e){e.preventDefault();setTimeout(function(){if(!gl3||gl3.r!==r)return;gl3=null;try{r.dispose()}catch(_){}sync3D(true)},0)});
   r.setPixelRatio(Math.min(devicePixelRatio||1,innerWidth<720?1.5:2));r.outputEncoding=THREE.sRGBEncoding;r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.05;r.shadowMap.enabled=true;r.shadowMap.type=THREE.PCFSoftShadowMap;
   var sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(28,1.4,20,12000);
   /* студия для отражений: тёмная комната и большие светлые панели, их и видно бликом в плёнке */
