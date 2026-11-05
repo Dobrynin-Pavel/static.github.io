@@ -1892,9 +1892,12 @@ orderLoad();
 try{var sf=JSON.parse(localStorage.getItem('tirio5-file')||'null');if(sf&&sf.file&&sf.file.pages){file=sf.file;issuesState=sf.iss||{}}}catch(e){}
 loadAll();
 render();
-/* Three.js грузим после показа страницы: расчёт доступен сразу, 3D подменяет плоскую обложку, когда библиотека готова */
-function load3D(){var t=document.createElement('script');t.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';t.onload=function(){sync3D(true)};document.head.appendChild(t)}
-if(document.readyState==='complete')load3D();else addEventListener('load',load3D);
+/* Three.js грузим после показа страницы: расчёт доступен сразу, 3D подменяет плоскую обложку, когда библиотека готова.
+   Сначала свой файл рядом с калькулятором (r128, тот же, что на cdnjs), не загрузился — с cdnjs */
+var THREE_SRC=['three.min.js','https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'];
+function load3D(i){i=i||0;if(i>=THREE_SRC.length)return;var t=document.createElement('script');t.src=THREE_SRC[i];
+  t.onload=function(){if(window.THREE)sync3D(true);else load3D(i+1)};t.onerror=function(){t.remove();load3D(i+1)};document.head.appendChild(t)}
+if(document.readyState==='complete')load3D();else addEventListener('load',function(){load3D()});
 if(restored)toast('Открыт ваш последний заказ');
 </script>
 </body>
