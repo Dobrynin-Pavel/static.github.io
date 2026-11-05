@@ -102,11 +102,11 @@ html.stepsout #pbar .mini{display:flex;animation:fadeIn .3s ease}
 .bigsteps.mini .st i{width:20px;height:20px;font-size:11px}
 .bigsteps.mini .steps li+li::before{margin:0 12px}
 .bigsteps.mini .lnk{font-size:13px}
-/* на шагах после расчёта — та же строка шагов, что на «Расчёте», в панели вместо состава заказа */
-#pbar .bsteps{flex:1;min-width:0;padding:0;box-shadow:none}
+/* на шагах после расчёта — та же строка шагов, что на «Расчёте», в панели вместо состава заказа; не хватает ширины — шаги без линий, как ниже */
+#pbar .bsteps{flex:1;min-width:0;padding:0;box-shadow:none;container-type:inline-size}
 @media (min-width:861px){#pbar .bclip.later{display:none}}
-/* шаги в узкой колонке: без линий, в две строки */
-@container (max-width:640px){.bigsteps{gap:12px}.bigsteps .steps{flex-wrap:wrap;gap:4px 16px}.bigsteps .steps li+li{flex:none}.bigsteps .steps li+li::before{display:none}}
+/* шаги в узкой колонке: без линий, в две строки. Порог — ширина, которую строка занимает целиком: заголовок, четыре шага с линиями от 24 px и «Сбросить» (957 px при отступах 10 px у линий) */
+@container (max-width:959px){.bigsteps{gap:12px}.bigsteps .steps{flex-wrap:wrap;gap:4px 16px}.bigsteps .steps li+li{flex:none}.bigsteps .steps li+li::before{display:none}}
 .stagehold{flex:1;min-height:0;border-radius:var(--rb);background:var(--card)}
 .stagecol{height:100%;padding:12px 16px;display:flex;flex-direction:column}
 .sbx{display:flex;flex-direction:column;gap:12px}
@@ -167,6 +167,14 @@ h1[tabindex]:focus{outline:0}
 .tls.stk .tl:not(.tlc)>small{justify-self:start;text-align:left}
 .tl.tlc{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:flex-start;justify-content:flex-start;gap:0}
 .tl b{min-width:0;font-weight:400;font-size:14px;line-height:1.2}
+/* сроки: дата и подпись в одну строку. Группе не хватает места на самое длинное слово или дату (fitChips) — поля уже, дата мельче; дата и так не влезла — короткий месяц, потом две строки; подпись не влезла — в две строки */
+.tl.tlc>b{white-space:nowrap}
+.tls.tln .tl{padding-left:10px;padding-right:10px}
+.tls.tln .tlc>b{font-size:13px}
+.tl .dsh,.tls.tlm .tl .dfl{display:none}
+.tls.tlm .tl .dsh{display:inline}
+.tl.tlc>small:first-child{white-space:nowrap}
+.tls.tlw .tlc>b,.tls.tlcw .tlc>small:first-child{white-space:normal}
 .tl small{display:block;justify-self:end;font-size:12px;line-height:17px;color:var(--mute);white-space:nowrap;text-align:right}
 .tl.tlc small{min-height:17px;text-align:left}
 #qnote.warn{padding:0;background:none}
@@ -258,9 +266,6 @@ h1[tabindex]:focus{outline:0}
 @media (max-width:1099px){
   .tls{grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-flow:row!important}
   [data-g="prod"] .tls{grid-template-columns:repeat(3,minmax(0,1fr))!important}
-  [data-g="prod"] .tl{padding:12px 10px}
-  [data-g="prod"] .tlc>small:first-child{white-space:normal}
-  [data-g="prod"] .tlc>b{font-size:13px;white-space:nowrap}
   .layb,html.team .layb,.lyt{display:none}
 }
 /* телефон: сроки строками, дата и цена в одну линию */
@@ -596,7 +601,7 @@ label.f{display:flex;flex-direction:column;gap:6px;margin-top:12px;font-size:14p
   .tab{padding:8px 5px;font-size:12px}
   .bigsteps .steps li+li::before{margin:0 10px}
 }
-@media (max-height:780px) and (min-width:861px){
+@media (max-height:780px) and (min-width:1024px){
   .lzs>.blk-stage{flex-basis:180px}
   .stagecol{padding:8px 12px 6px}
   .stage{gap:6px}
@@ -607,6 +612,15 @@ label.f{display:flex;flex-direction:column;gap:6px;margin-top:12px;font-size:14p
 }
 @media (max-width:1000px){
   .who .wt{display:none}
+}
+/* уже 1024 px: все блоки в одну колонку в порядке раскладки — параметры, под ними сцена и срок. Закреплённой колонки нет */
+@media (max-width:1023px){
+  .lw{display:flex;flex-direction:column;align-items:stretch}
+  .lz,.lzs{display:contents}
+}
+/* планшет: сцена той же высоты, что в незакреплённой колонке. Остальное как на компьютере: панель сверху, шаги, цена в панели */
+@media (min-width:861px) and (max-width:1023px){
+  .lzs>.blk-stage{flex-basis:440px}
 }
 @media (max-width:860px){
   /* сроки на телефоне выше: в них попадают пальцем, а не курсором */
@@ -638,9 +652,8 @@ label.f{display:flex;flex-direction:column;gap:6px;margin-top:12px;font-size:14p
   .cmpf .fine{display:none}
   #pbar{transition:transform .3s ease}
   html.barout #pbar{transform:translateY(-100%)}
-  /* телефон: все блоки в одну колонку в порядке раскладки, режим раскладки выключен */
-  .lw{display:flex;flex-direction:column;align-items:stretch;padding:12px 16px 20px;gap:12px}
-  .lz,.lzs{display:contents}
+  /* телефон: поля и зазоры меньше, сцена во всю ширину */
+  .lw{padding:12px 16px 20px;gap:12px}
   .blk-stage{margin:0 -16px}
   .stagehold{border-radius:0}
   .sbx{scroll-margin-top:var(--bar)}
@@ -797,6 +810,8 @@ var LAM=[{v:'mt',t:'Матовая',s:'гасит блики'},{v:'gl',t:'Гля
 var LAMP={no:0,mt:5.5,gl:4.8,sf:10.5};
 var PROD=[{v:'std',t:'Стандарт',days:5,k:1,tag:'Выгоднее',tc:''},{v:'fast',t:'Ускоренно',days:3,k:1.18,tag:'',tc:''},{v:'exp',t:'Срочно',days:1,k:1.45,tag:'Быстрее',tc:'fast',max:300}];
 var MON=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+/* короткие названия месяцев — для плашек срока, где полная дата не помещается */
+var MONS=['янв.','февр.','марта','апр.','мая','июня','июля','авг.','сент.','окт.','нояб.','дек.'];
 var WD=['вс','пн','вт','ср','чт','пт','сб'];
 
 /* ================= состояние ================= */
@@ -862,7 +877,9 @@ function weightKg(t){var d=dims(t),a=(d[0]*d[1])/1e6;return ((t.pages-4)/2*t.den
 function thickMm(t){return ((t.pages-4)/2*t.dens+2*covDens(t))*.00105}
 function kgTxt(n){return n.toLocaleString('ru-RU',{maximumFractionDigits:1})}
 function addBiz(days){var d=new Date(),n=0;while(n<days){d.setDate(d.getDate()+1);var w=d.getDay();if(w!==0&&w!==6)n++}return d}
-function dlabel(d){return WD[d.getDay()]+', '+d.getDate()+' '+MON[d.getMonth()]}
+function dlabel(d,sh){return WD[d.getDay()]+', '+d.getDate()+' '+(sh?MONS:MON)[d.getMonth()]}
+/* дата в плашке срока: полная и короткая, какую показать — решает fitChips */
+function dtile(d){return '<span class="dfl">'+cap(dlabel(d))+'</span><span class="dsh">'+cap(dlabel(d,true))+'</span>'}
 function tomorrow(){var d=new Date();d.setDate(d.getDate()+1);return d.getDate()+' '+MON[d.getMonth()]}
 function plusDays(n){var d=new Date();d.setDate(d.getDate()+n);return d.getDate()+' '+MON[d.getMonth()]}
 function fmtName(t){var f=FMT.find(function(x){return x.v===t.fmt}),d=dims(t);return (t.fmt==='cu'?'Свой размер':f.t)+' · '+(d[0]||'—')+'×'+(d[1]||'—')+' мм'}
@@ -1120,8 +1137,15 @@ function bigInert(){var on=stageBig&&view==='calc',sc=document.querySelector('.s
 function viewSize(){var v=document.getElementById('view');if(v){var r=v.getBoundingClientRect();if(r.width>50&&r.height>50)vsz=[r.width,r.height]}if(!vsz)vsz=innerWidth>860?[Math.max(400,innerWidth-544),Math.max(360,innerHeight-250)]:[innerWidth-32,300];return vsz}
 /* сцена следит за своим блоком: панель раздвигается, а камера и холст перестраиваются в том же кадре, без мигания */
 var viewEl=null,viewRO=window.ResizeObserver?new ResizeObserver(function(){if(view!=='calc'||!gl3)return;vsz=null;sync3D(true);if(gl3.cur&&gl3.sz){draw3D();gl3.dirty=false}}):null;
-/* чип цены справа, пока в каждой плашке группы он помещается рядом с самым длинным словом; иначе у всей группы — под названием */
-function fitChips(){document.querySelectorAll('#app .tls').forEach(function(g){g.classList.remove('stk');
+/* плашки группы подгоняются под свои слова, а не под ширину окна: самое длинное слово, дата или подпись срока не помещается — у группы поля уже и дата мельче,
+   дата не влезает и так — месяц сокращается, и только потом перенос. Затем чип цены справа, пока в каждой плашке он помещается рядом с самым длинным словом; иначе у всей группы — под названием */
+function wordW(b){b.style.width='min-content';var w=b.offsetWidth;b.style.width='';return w}
+function tlIn(t){var cs=getComputedStyle(t);return t.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight)}
+function fitChips(){document.querySelectorAll('#app .tls').forEach(function(g){g.classList.remove('stk','tln','tlm','tlw','tlcw');
+  var all=[].filter.call(g.querySelectorAll('.tl'),function(t){return t.offsetWidth>0}),over=function(q){return all.some(function(t){var w=tlIn(t);return [].some.call(t.querySelectorAll(q),function(e){return wordW(e)>w})})},
+      D=':scope>b',C='.tlc>small:first-child';
+  /* дата и подпись срока подгоняются каждая сама по себе: длинная подпись не сокращает дату */
+  if(over(D+','+C)){g.classList.add('tln');if(over(D)&&g.querySelector('.dsh'))g.classList.add('tlm');if(over('.tlc>b'))g.classList.add('tlw');if(over(C))g.classList.add('tlcw')}
   var ts=[].slice.call(g.querySelectorAll('.tl:not(.tlc)')),chip=0;
   ts.forEach(function(t){var m=t.querySelector('small');if(m&&m.textContent)chip=Math.max(chip,m.offsetWidth)});
   if(!chip)return;
@@ -1133,7 +1157,7 @@ var fitRaf=0;if(document.fonts)document.fonts.ready.then(function(){fitChips();f
    если нет — своей прокрутки нет, колонка едет со страницей и закрепляется по нижнему краю */
 function fitCol(){var z=document.querySelector('.lzs');if(!z)return;
   z.classList.remove('tall','no3d');z.style.top='';z.style.marginBottom='';
-  if(isPhone())return;
+  if(getComputedStyle(z).display==='contents')return;
   /* место под панелью считаем сразу с уменьшенной строкой шагов, чтобы сцена не прыгала при прокрутке */
   var bi=document.querySelector('#pbar .bi'),bar0=(bi?bi.offsetHeight:0)+(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--mini'))||0);
   if(z.scrollHeight>z.clientHeight+1){
@@ -1236,7 +1260,7 @@ var G={
     return '<div class="tls t3" role="group" aria-label="Быстрый выбор тиража">'+[100,200,300].map(function(n){return '<button class="tl tlc tq" data-qset="'+n+'" aria-pressed="'+(s.qty===n)+'">'+tq(n)+'</button>'}).join('')+'</div>'},
   prod:function(){
     var h='<h3>Срок</h3><div class="tls t3" role="group" aria-label="Срок изготовления">';
-    PROD.forEach(function(p){var ok=prodOk(p,s),sel=prodOf(s)===p.v;h+=tl('prod',p.v,sel,cap(dlabel(addBiz(p.days))),sel||!ok?'':dsh(dlt({prod:p.v})),{pre:'<small>'+p.t+(p.max?', до '+p.max:'')+'</small>',dis:!ok})});
+    PROD.forEach(function(p){var ok=prodOk(p,s),sel=prodOf(s)===p.v;h+=tl('prod',p.v,sel,dtile(addBiz(p.days)),sel||!ok?'':dsh(dlt({prod:p.v})),{pre:'<small>'+p.t+(p.max?', до '+p.max:'')+'</small>',dis:!ok})});
     h+='</div>';
     var ex=PROD.find(function(p){return p.v===s.prod});
     if(!prodOk(ex,s))h+='<div class="why" id="prodwhy"><p>Срочно печатаем до '+ex.max+' экз., сейчас '+s.qty+'. Считаем ускоренно.</p><button class="lnk" data-act="expmax">Тираж '+ex.max+' экз., срочно</button></div>';
